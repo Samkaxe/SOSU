@@ -3,7 +3,7 @@ package DAL.Manager1;
 import BE.Case;
 import BE.Group;
 import BE.Patient;
-import DAL.DataAccess.DataAccess;
+import DAL.DataAccess.JDBCConnectionPool;
 import DAL.util.CopyChecker;
 import DAL.util.DalException;
 import java.sql.*;
@@ -12,19 +12,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DAOPatient {
-    private final DataAccess dataAccess;
+    private final JDBCConnectionPool dataAccess;
+    private Connection con ;
     private CopyChecker copyChecker;
     private final int isTrue = 1;
     private final int isFalse = 0;
 
     public DAOPatient() {
-        dataAccess = new DataAccess();
+        dataAccess = new JDBCConnectionPool();
         copyChecker = CopyChecker.getInstance();
     }
 
     public List<Patient> getAllPatients(int schoolid) throws DalException {
         ArrayList<Patient> patients = new ArrayList<>();
-        try(Connection con = dataAccess.getConnection()) {
+        try {
+            con = dataAccess.getConnection();
             String sql = "SELECT * FROM Patient WHERE schoolid = ? AND isCopy = ?";
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setInt(1, schoolid);
@@ -50,6 +52,10 @@ public class DAOPatient {
             return patients;
         } catch (SQLException e) {
             throw new DalException("Connection Lost" , e);
+        }finally {
+            if(con != null){
+                dataAccess.releaseConnection(con);
+            }
         }
 
     }
@@ -59,7 +65,8 @@ public class DAOPatient {
     }
 
     public Patient createPatient(Patient patient) throws DalException {
-        try (Connection con = dataAccess.getConnection()){
+        try {
+            con = dataAccess.getConnection();
             String sql = "INSERT INTO Patient (first_name, last_name, dateofBirth, gender,weight ,height ,cpr ," +
                     " phone_number,schoolid, isCopy) " +
                     "VALUES (?,?,?,?,?,?,?,?,?,?);";
@@ -100,11 +107,16 @@ public class DAOPatient {
             return patient;
         } catch (SQLException e) {
             throw new DalException("Connection Lost " , e);
+        } finally {
+        if(con != null){
+            dataAccess.releaseConnection(con);
         }
+    }
     }
 
     public void addObservation(String observation, Patient currentPatient) throws DalException{
-        try(Connection con = dataAccess.getConnection()){
+        try{
+            con = dataAccess.getConnection();
             String sql = "INSERT INTO [observationstable] ([patientid],[content]) VALUES (?,?)";
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1,currentPatient.getId());
@@ -112,12 +124,17 @@ public class DAOPatient {
             st.executeUpdate();
         }catch (SQLException sqlException){
             throw new DalException("Not able to add the observation",sqlException);
+        }finally {
+            if(con != null) {
+                dataAccess.releaseConnection(con);
+            }
         }
     }
 
     public void updatepatient(Patient patient) throws DalException {
 
-        try (Connection con = dataAccess.getConnection()){
+        try {
+            con = dataAccess.getConnection();
             String sql = "Update Patient set first_name = ? , last_name = ? , dateofBirth = ? , gender = ? " +
                     ", weight = ? , height = ? , cpr = ? , phone_number = ? where id = ? ";
             PreparedStatement prs = con.prepareStatement(sql);
@@ -133,26 +150,36 @@ public class DAOPatient {
             prs.executeUpdate();
         } catch (SQLException e) {
             throw new DalException("Connection Lost" , e);
+        }finally {
+            if(con != null) {
+                dataAccess.releaseConnection(con);
+            }
         }
     }
 
 
     public void deletePatient(Patient patient) throws DalException {
-        try(Connection con = dataAccess.getConnection()){
+        try{
+            con = dataAccess.getConnection();
             String sql = "DELETE FROM Patient WHERE id = ?";
             PreparedStatement prs = con.prepareStatement(sql);
             prs.setInt(1 , patient.getId());
             prs.executeUpdate();
         } catch (SQLException e) {
             throw new DalException("Connection Lost" , e);
+        }finally {
+            if(con != null) {
+                dataAccess.releaseConnection(con);
+            }
         }
     }
 
     private ArrayList<String> getObservationsOf(int patientID) throws DalException{
         ArrayList<String> observations = new ArrayList<>();
-        try(Connection connection = dataAccess.getConnection()){
+        try{
+            con = dataAccess.getConnection();
             String sql = "SELECT [content] FROM observationstable WHERE [patientid] = ?";
-            PreparedStatement st = connection.prepareStatement(sql);
+            PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1,patientID);
             st.execute();
             ResultSet rs = st.getResultSet();
@@ -162,16 +189,21 @@ public class DAOPatient {
             return observations;
         }catch(SQLException sqlException){
             throw new DalException("Not able to retrieve the Observations",sqlException);
+        }finally {
+            if(con != null) {
+                dataAccess.releaseConnection(con);
+            }
         }
     }
 
 
     public Patient getPatientOfCase(Case selectedCase, Group group) throws DalException {
-        try(Connection connection = dataAccess.getConnection()){
+        try{
+            con = dataAccess.getConnection();
             String sql = "SELECT a.id, a.first_name, a.last_name, a.dateofBirth, a.gender, a.weight ," +
                     " a.height, a.cpr, a.phone_number, a.schoolid, a.isCopy FROM [Patient] AS a " +
                     "INNER JOIN SickPatient AS b ON a.id = b.patientid WHERE b.Groupid = ? AND b.caseid = ? AND a.[isCopy] = ?";
-            PreparedStatement st = connection.prepareStatement(sql);
+            PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1,group.getId());
             st.setInt(2,selectedCase.getId());
             st.setInt(3, isTrue);
@@ -196,6 +228,10 @@ public class DAOPatient {
 
         }catch (SQLException sqlException){
             throw new DalException("Not able to get the patient for the case", sqlException);
+        }finally {
+            if(con != null) {
+                dataAccess.releaseConnection(con);
+            }
         }
         return null;
     }
