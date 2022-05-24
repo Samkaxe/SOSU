@@ -244,6 +244,31 @@ public class BLLManager implements BLLFacade {
     }
 
     @Override
+    public List<Category> getAllCategories() throws DalException {
+        return dalFacade.getAllCategories();
+    }
+
+    @Override
+    public List<SubCategory> getAllSubCategories(int catid) throws DalException {
+        return dalFacade.getAllSubCategories(catid);
+    }
+
+    @Override
+    public List<PatientLog> logs(Patient patient) throws DalException {
+        return dalFacade.logs(patient);
+    }
+
+    @Override
+    public void updateLog(PatientLog patientLog, Patient patient) throws DalException {
+            dalFacade.updateLog(patientLog , patient);
+    }
+
+    @Override
+    public void addLog(PatientLog patientLog) throws DalException {
+            dalFacade.addLog(patientLog );
+    }
+
+    @Override
     public void saveStudentQuestionAnswer(StudentQuestionnaireAnswer answer) throws DalException {
         dalFacade.addStudentQuestionAnswer(answer);
     }

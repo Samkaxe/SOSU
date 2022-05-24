@@ -82,6 +82,7 @@ public interface BLLFacade {
     List<User> getAllUSERS(int schoolId , String utype) throws DalException;
 
     List<StudentQuestion> getQuestionnaireQuestions(int questionnaireId) throws DalException;
+
     Patient getPatientOfCase(Case selectedCase, Group group) throws DalException;
 
     void unassignCase(Case selectedItem) throws DalException;
@@ -97,6 +98,16 @@ public interface BLLFacade {
     void UpdateQuestionnaire(int questionnaireId, Case currentCase, Patient currentPatient, Group currentGroup) throws DalException;
 
     int getQuestionnaireOf(int caseId, int groupId) throws DalException;
+
+    List<Category> getAllCategories() throws DalException;
+
+    List<SubCategory> getAllSubCategories(int catid) throws DalException;
+
+    List<PatientLog> logs(Patient patient)throws DalException;
+
+    void updateLog(PatientLog patientLog , Patient patient)throws DalException;
+
+    void addLog(PatientLog patientLog) throws DalException;
 }
 
 

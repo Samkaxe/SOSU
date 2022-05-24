@@ -3,9 +3,12 @@ package DAL.Manager1;
 import BE.Case;
 import BE.Group;
 import BE.Patient;
+import BE.PatientLog;
 import DAL.DataAccess.JDBCConnectionPool;
 import DAL.util.CopyChecker;
 import DAL.util.DalException;
+import com.microsoft.sqlserver.jdbc.SQLServerException;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -234,5 +237,97 @@ public class DAOPatient {
             }
         }
         return null;
+    }
+
+    public void addLog(PatientLog patientLog ) throws DalException{
+       try {
+           con = dataAccess.getConnection();
+           String sql = "insert into [dbo].[trackOnPatient] (Mestring ,Motivation , Ressourcer , Roller ,Vaner ,Uddannelseogjob ,Livshistorie ,Netværk , Helbredsoplysninger , Hjælpemidler , [Boligens indretning] , patientid) " +
+                   "values (?,?,?,?,?,?,?,?,?,?,?,?) ";
+           PreparedStatement prs = con.prepareStatement(sql);
+            prs.setString(1 , patientLog.getMestring());
+            prs.setString(2 , patientLog.getMotivation());
+            prs.setString(3 ,patientLog.getRessourcer());
+            prs.setString(4 , patientLog.getRoller());
+            prs.setString(5 , patientLog.getVaner());
+            prs.setString(6 , patientLog.getUddannelse());
+            prs.setString(7 , patientLog.getLivshistorie());
+            prs.setString(8 , patientLog.getNetværk());
+            prs.setString(9 , patientLog.getHelbredsoplysninger());
+            prs.setString(10 , patientLog.getHjælpemidler());
+            prs.setString(11 ,patientLog.getBoligens());
+            prs.setInt(12 , patientLog.getPatientid());
+       } catch (SQLException e) {
+          throw new DalException("cant insert Log at the moment " , e);
+       }finally {
+           if(con != null){
+               dataAccess.releaseConnection(con);
+           }
+       }
+    }
+
+    public void updateLog(PatientLog patientLog , Patient patient)throws DalException{
+        try {
+            con = dataAccess.getConnection();
+            String sql = "UPDATE [dbo].[trackOnPatient] SET Mestring  = ? ,Motivation = ? , Ressourcer = ? , Roller = ? , Vaner = ? , Uddannelseogjob = ? , Livshistorie = ? , Netværk = ? , Helbredsoplysninger = ? , Hjælpemidler = ? , [Boligens indretning] = ? where  patientid  = ?";
+            PreparedStatement prs = con.prepareStatement(sql);
+            prs.setString(1 , patientLog.getMestring());
+            prs.setString(2 , patientLog.getMotivation());
+            prs.setString(3 ,patientLog.getRessourcer());
+            prs.setString(4 , patientLog.getRoller());
+            prs.setString(5 , patientLog.getVaner());
+            prs.setString(6 , patientLog.getUddannelse());
+            prs.setString(7 , patientLog.getLivshistorie());
+            prs.setString(8 , patientLog.getNetværk());
+            prs.setString(9 , patientLog.getHelbredsoplysninger());
+            prs.setString(10 , patientLog.getHjælpemidler());
+            prs.setString(11 ,patientLog.getBoligens());
+            prs.setInt(12 , patient.getId());
+        } catch (SQLServerException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if(con != null){
+                dataAccess.releaseConnection(con);
+            }
+        }
+    }
+
+    public List<PatientLog> getLogs(Patient patient) throws DalException{
+        List<PatientLog> logs = new ArrayList<>();
+        try{
+            con = dataAccess.getConnection();
+            String sql = "SELECT * from [dbo].[trackOnPatient] where patientid  = ?  ";
+            PreparedStatement prs = con.prepareStatement(sql);
+            prs.setInt(1 , patient.getId());
+            prs.execute();
+            ResultSet rs = prs.getResultSet();
+            while (rs.next()){
+             int id =   rs.getInt("id");
+             String mes =   rs.getString("Mestring");
+              String moti =  rs.getString("Motivation");
+              String res =  rs.getString("Ressourcer");
+              String roll =  rs.getString("Roller");
+              String van =  rs.getString("Vaner");
+               String udd = rs.getString("Uddannelseogjob");
+              String liv =  rs.getString("Livshistorie");
+              String net =  rs.getString("Netværk");
+              String hel =  rs.getString("Helbredsoplysninger");
+              String hjel =  rs.getString("Hjælpemidler");
+              String bol =  rs.getString("[Boligens indretning]");
+
+              PatientLog pl = new PatientLog(id ,mes,moti,res,roll,van,udd ,liv,net,hel,hjel,bol, patient.getId());
+
+              logs.add(pl);
+            }
+            return logs;
+        } catch (SQLException e) {
+           throw new DalException("cant show the logs at the moment ", e);
+        }finally {
+            if(con != null){
+                dataAccess.releaseConnection(con);
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ import java.io.IOException;
 public class testedmain extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../GUI/Views/Admin.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../GUI/Views/questionsAndInfo.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         scene.getStylesheets().add("GUI/Views/CSS/styles.css");
         stage.setResizable(false);
