@@ -5,7 +5,7 @@ import BE.User;
 import DAL.util.DalException;
 import GUI.Alerts.SoftAlert;
 import GUI.Models.NewCaseMOD;
-import GUI.Util.StaticData;
+import GUI.Alerts.Util.StaticData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

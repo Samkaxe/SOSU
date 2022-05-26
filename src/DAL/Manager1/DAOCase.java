@@ -3,7 +3,6 @@ package DAL.Manager1;
 import BE.Case;
 import BE.Group;
 import BE.Patient;
-import DAL.DataAccess.JDBCConnectionPool;
 import DAL.util.CopyChecker;
 import DAL.util.DalException;
 import java.sql.*;
@@ -12,20 +11,20 @@ import java.util.List;
 
 public class DAOCase {
 
-    private final JDBCConnectionPool dataAccess;
+
     private CopyChecker copyChecker;
     private final int isFalse = 0;
     private final int isTrue = 1;
-    private Connection con = null;
+
     public DAOCase() {
-        dataAccess = new JDBCConnectionPool();
+
         copyChecker = CopyChecker.getInstance();
     }
 
-    public List<Case> getAllCases(int schoolid) throws DalException {
+    public List<Case> getAllCases(Connection con,int schoolid) throws DalException {
         ArrayList<Case> cases = new ArrayList<>();
         try{
-            con = dataAccess.getConnection();
+
             String sql = "SELECT * FROM [Case] WHERE [schoolid]  = ? AND [isCopy] = ?";
             PreparedStatement prs = con.prepareStatement(sql);
             prs.setInt(1 , schoolid);
@@ -47,17 +46,12 @@ public class DAOCase {
             return cases;
         } catch (SQLException e) {
             throw new DalException("Connection Lost" , e);
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public List<Case> getCasesAssignedTo(Group group)throws DalException{
+    public List<Case> getCasesAssignedTo(Connection con,Group group)throws DalException{
         ArrayList<Case> cases = new ArrayList<>();
         try {
-            con = dataAccess.getConnection();
             String sql = "SELECT a.id, a.Description_of_the_condition, a.CategoryName, a.SubCategoryName, a.name, a.schoolid , b.graded " +
                     "FROM [Case] AS a INNER JOIN SickPatient AS b ON a.id = b.caseid WHERE b.Groupid = ? AND a.[isCopy] = ? AND b.[graded] = ?";
             PreparedStatement prs = con.prepareStatement(sql);
@@ -80,16 +74,11 @@ public class DAOCase {
         } catch (SQLException e) {
            throw new DalException("Couldnot retrive list of cases from the database " , e);
         }
-        finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
-        }
     }
 
-    public void assignCaseToGroup(Patient patient, Case assignedCase, Group group) throws DalException {
+    public void assignCaseToGroup(Connection con,Patient patient, Case assignedCase, Group group) throws DalException {
         try{
-            con = dataAccess.getConnection();
+
             String sql = "INSERT INTO [Case] (Description_of_the_condition,CategoryName,SubCategoryName,[name],schoolid,isCopy) VALUES (?,?,?,?,?,?)";
             String sql2 = "SELECT [id] FROM [Case] WHERE [name] = ? AND [isCopy] = ?";
             String sql3 = "INSERT INTO [Patient] (first_name, last_name, dateofBirth, gender,weight ,height ,cpr , phone_number, schoolid, isCopy) VALUES (?,?,?,?,?,?,?,?,?,?)";
@@ -145,17 +134,12 @@ public class DAOCase {
         } catch (SQLException sqlException) {
             throw new DalException("Not able to assign the case to the group" , sqlException);
         }
-        finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
-        }
     }
 
 
-    public Case createCase(Case newCase) throws DalException {
+    public Case createCase(Connection con,Case newCase) throws DalException {
         try{
-            con = dataAccess.getConnection();
+
             String sql = "INSERT INTO [dbo].[Case] ( name ,Description_of_the_condition,CategoryName , SubCategoryName ,schoolid, isCopy) " +
                     "VALUES (?,?,?,?,?,?);" ;
             String sql2 = "SELECT [id] FROM [dbo].[Case] WHERE [name] = ? AND [Description_of_the_condition] = ? AND [CategoryName] = ? AND [SubCategoryName] = ? AND [schoolid] = ?";
@@ -181,18 +165,12 @@ public class DAOCase {
             return newCase;
         } catch (SQLException e) {
             throw new DalException("Connection Lost" , e);
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
-
     }
 
 
-    public void updateCase(Case c) throws DalException {
+    public void updateCase(Connection con,Case c) throws DalException {
         try{
-            con = dataAccess.getConnection();
             String sql = "Update [Case] set name = ? , description_of_the_condition = ? , CategoryName = ? , SubCategoryName = ? " +
                     " where id = ? ";
             PreparedStatement prs = con.prepareStatement(sql);
@@ -205,17 +183,12 @@ public class DAOCase {
 
         } catch (SQLException e) {
             throw new DalException("Connection Lost" , e);
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
 
-    public void deleteCase(Case c) throws DalException {
+    public void deleteCase(Connection con,Case c) throws DalException {
         try{
-            con = dataAccess.getConnection();
             String sql = " DELETE FROM [Case] WHERE id = ?";
             PreparedStatement prs = con.prepareStatement(sql);
             prs.setInt(1 , c.getId());
@@ -223,32 +196,23 @@ public class DAOCase {
         } catch (SQLException e) {
             throw new DalException("Connection Lost" , e);
 
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public void unassignCase(Case selectedItem) throws DalException{
+    public void unassignCase(Connection con,Case selectedItem) throws DalException{
         try{
-            con = dataAccess.getConnection();
             String sql = "DELETE FROM [SickPatient] WHERE [caseid] = ?";
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1,selectedItem.getId());
             st.execute();
         }catch (SQLException sqlException){
             throw new DalException("Not able to unassign the case", sqlException);
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public void markCaseAsGraded(Case selectedItem) throws DalException {
+    public void markCaseAsGraded(Connection con,Case selectedItem) throws DalException {
         try{
-            con = dataAccess.getConnection();
+
             String sql = "UPDATE [SickPatient] SET [graded] = ? WHERE [caseid] = ?";
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1,isTrue);
@@ -256,16 +220,12 @@ public class DAOCase {
             st.execute();
         }catch (SQLException sqlException){
             throw new DalException("Not able to mark the case as graded", sqlException);
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public void unmarkCaseAsGraded(Case selectedItem) throws DalException{
+    public void unmarkCaseAsGraded(Connection con,Case selectedItem) throws DalException{
         try{
-            con = dataAccess.getConnection();
+
             String sql = "UPDATE [SickPatient] SET [graded] = ? WHERE [caseid] = ?";
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1, isFalse);
@@ -273,17 +233,12 @@ public class DAOCase {
             st.execute();
         }catch (SQLException sqlException){
             throw new DalException("Not able to unmark as graded the case", sqlException);
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public List<Case> getCasesGradedOf(Group group) throws DalException{
+    public List<Case> getCasesGradedOf(Connection con,Group group) throws DalException{
         ArrayList<Case> cases = new ArrayList<>();
         try{
-            con = dataAccess.getConnection();
             String sql = "SELECT a.id, a.Description_of_the_condition, a.CategoryName, a.SubCategoryName, a.name, a.schoolid , b.graded " +
                     "FROM [Case] AS a INNER JOIN SickPatient AS b ON a.id = b.caseid WHERE b.Groupid = ? AND a.[isCopy] = ? AND b.[graded] = ?";
             PreparedStatement prs = con.prepareStatement(sql);
@@ -305,10 +260,7 @@ public class DAOCase {
             return cases;
         } catch (SQLException e) {
             throw new DalException("Not able to get the cases graded for the group" , e);
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
+
     }
 }

@@ -3,6 +3,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.apache.log4j.PropertyConfigurator;
 import org.w3c.dom.ls.LSOutput;
 
 import java.io.IOException;
@@ -21,5 +22,8 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch();
+        //String log4jConfPath = System.getProperty("user.dir")+"/src/DAL/DataAccess/log4j.properties";
+        //String log4jConfPath = "/src/DAL/DataAccess/log4j.properties";
+        //PropertyConfigurator.configure(log4jConfPath);
     }
 }

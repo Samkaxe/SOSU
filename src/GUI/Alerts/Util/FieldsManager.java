@@ -1,4 +1,4 @@
-package GUI.Util;
+package GUI.Alerts.Util;
 
 import BE.Case;
 import BE.Patient;

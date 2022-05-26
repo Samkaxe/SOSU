@@ -15,21 +15,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DAOPatient {
-    private final JDBCConnectionPool dataAccess;
-    private Connection con ;
+
     private CopyChecker copyChecker;
     private final int isTrue = 1;
     private final int isFalse = 0;
 
     public DAOPatient() {
-        dataAccess = new JDBCConnectionPool();
         copyChecker = CopyChecker.getInstance();
     }
 
-    public List<Patient> getAllPatients(int schoolid) throws DalException {
+    public List<Patient> getAllPatients(Connection con,int schoolid) throws DalException {
         ArrayList<Patient> patients = new ArrayList<>();
         try {
-            con = dataAccess.getConnection();
+
             String sql = "SELECT * FROM Patient WHERE schoolid = ? AND isCopy = ?";
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setInt(1, schoolid);
@@ -47,7 +45,7 @@ public class DAOPatient {
                 String cpr = rs.getString("cpr");
                 String phonenumber = rs.getString("phone_number");
                 boolean isCopy = copyChecker.checkIfCopy(rs.getInt("isCopy"));
-                ArrayList<String> observations = getObservationsOf(id);
+                ArrayList<String> observations = getObservationsOf(con ,id);
                 Patient patient = new Patient(id,first_name,lastname,convertToLocalDateViaSqlDate(dateofbirth),gender,weight,height,
                         cpr,phonenumber, observations, schoolid, isCopy);
                 patients.add(patient);
@@ -55,21 +53,15 @@ public class DAOPatient {
             return patients;
         } catch (SQLException e) {
             throw new DalException("Connection Lost" , e);
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
-
     }
 
     public LocalDate convertToLocalDateViaSqlDate(Date dateToConvert) {
         return new java.sql.Date(dateToConvert.getTime()).toLocalDate();
     }
 
-    public Patient createPatient(Patient patient) throws DalException {
+    public Patient createPatient(Connection con,Patient patient) throws DalException {
         try {
-            con = dataAccess.getConnection();
             String sql = "INSERT INTO Patient (first_name, last_name, dateofBirth, gender,weight ,height ,cpr ," +
                     " phone_number,schoolid, isCopy) " +
                     "VALUES (?,?,?,?,?,?,?,?,?,?);";
@@ -91,7 +83,7 @@ public class DAOPatient {
             prs.setInt(10,patient.getIsCopyDB());
             prs.executeUpdate();
 
-            addObservation(patient.getObservationsList().get(0),patient);
+            addObservation(con ,patient.getObservationsList().get(0),patient);
 
             prs2.setString(1 , patient.getFirst_name());
             prs2.setString(2 , patient.getLast_name());
@@ -110,16 +102,13 @@ public class DAOPatient {
             return patient;
         } catch (SQLException e) {
             throw new DalException("Connection Lost " , e);
-        } finally {
-        if(con != null){
-            dataAccess.releaseConnection(con);
         }
     }
-    }
 
-    public void addObservation(String observation, Patient currentPatient) throws DalException{
+
+    public void addObservation(Connection con,String observation, Patient currentPatient) throws DalException{
         try{
-            con = dataAccess.getConnection();
+
             String sql = "INSERT INTO [observationstable] ([patientid],[content]) VALUES (?,?)";
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1,currentPatient.getId());
@@ -127,17 +116,12 @@ public class DAOPatient {
             st.executeUpdate();
         }catch (SQLException sqlException){
             throw new DalException("Not able to add the observation",sqlException);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public void updatepatient(Patient patient) throws DalException {
+    public void updatepatient(Connection con,Patient patient) throws DalException {
 
         try {
-            con = dataAccess.getConnection();
             String sql = "Update Patient set first_name = ? , last_name = ? , dateofBirth = ? , gender = ? " +
                     ", weight = ? , height = ? , cpr = ? , phone_number = ? where id = ? ";
             PreparedStatement prs = con.prepareStatement(sql);
@@ -153,34 +137,25 @@ public class DAOPatient {
             prs.executeUpdate();
         } catch (SQLException e) {
             throw new DalException("Connection Lost" , e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
 
-    public void deletePatient(Patient patient) throws DalException {
+    public void deletePatient(Connection con,Patient patient) throws DalException {
         try{
-            con = dataAccess.getConnection();
+
             String sql = "DELETE FROM Patient WHERE id = ?";
             PreparedStatement prs = con.prepareStatement(sql);
             prs.setInt(1 , patient.getId());
             prs.executeUpdate();
         } catch (SQLException e) {
             throw new DalException("Connection Lost" , e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    private ArrayList<String> getObservationsOf(int patientID) throws DalException{
+    private ArrayList<String> getObservationsOf(Connection con,int patientID) throws DalException{
         ArrayList<String> observations = new ArrayList<>();
         try{
-            con = dataAccess.getConnection();
             String sql = "SELECT [content] FROM observationstable WHERE [patientid] = ?";
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1,patientID);
@@ -192,17 +167,13 @@ public class DAOPatient {
             return observations;
         }catch(SQLException sqlException){
             throw new DalException("Not able to retrieve the Observations",sqlException);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
 
-    public Patient getPatientOfCase(Case selectedCase, Group group) throws DalException {
+    public Patient getPatientOfCase(Connection con,Case selectedCase, Group group) throws DalException {
         try{
-            con = dataAccess.getConnection();
+
             String sql = "SELECT a.id, a.first_name, a.last_name, a.dateofBirth, a.gender, a.weight ," +
                     " a.height, a.cpr, a.phone_number, a.schoolid, a.isCopy FROM [Patient] AS a " +
                     "INNER JOIN SickPatient AS b ON a.id = b.patientid WHERE b.Groupid = ? AND b.caseid = ? AND a.[isCopy] = ?";
@@ -223,7 +194,7 @@ public class DAOPatient {
                         rs.getString("height"),
                         rs.getString("cpr"),
                         rs.getString("phone_number"),
-                        getObservationsOf(id),
+                        getObservationsOf(con ,id),
                         rs.getInt("schoolid"),
                         copyChecker.checkIfCopy(rs.getInt("isCopy"))
                         );
@@ -231,17 +202,12 @@ public class DAOPatient {
 
         }catch (SQLException sqlException){
             throw new DalException("Not able to get the patient for the case", sqlException);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
         return null;
     }
 
-    public void addLog(PatientLog patientLog ) throws DalException{
+    public void addLog(Connection con,PatientLog patientLog ) throws DalException{
        try {
-           con = dataAccess.getConnection();
            String sql = "insert into [dbo].[trackOnPatient] (Mestring ,Motivation , Ressourcer , Roller ,Vaner ,Uddannelseogjob ,Livshistorie ,Netværk , Helbredsoplysninger , Hjælpemidler , [Boligens indretning] , patientid) " +
                    "values (?,?,?,?,?,?,?,?,?,?,?,?) ";
            PreparedStatement prs = con.prepareStatement(sql);
@@ -259,16 +225,13 @@ public class DAOPatient {
             prs.setInt(12 , patientLog.getPatientid());
        } catch (SQLException e) {
           throw new DalException("cant insert Log at the moment " , e);
-       }finally {
-           if(con != null){
-               dataAccess.releaseConnection(con);
-           }
        }
+
     }
 
-    public void updateLog(PatientLog patientLog , Patient patient)throws DalException{
+    public void updateLog(Connection con,PatientLog patientLog , Patient patient)throws DalException{
         try {
-            con = dataAccess.getConnection();
+
             String sql = "UPDATE [dbo].[trackOnPatient] SET Mestring  = ? ,Motivation = ? , Ressourcer = ? , Roller = ? , Vaner = ? , Uddannelseogjob = ? , Livshistorie = ? , Netværk = ? , Helbredsoplysninger = ? , Hjælpemidler = ? , [Boligens indretning] = ? where  patientid  = ?";
             PreparedStatement prs = con.prepareStatement(sql);
             prs.setString(1 , patientLog.getMestring());
@@ -287,17 +250,12 @@ public class DAOPatient {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public List<PatientLog> getLogs(Patient patient) throws DalException{
+    public List<PatientLog> getLogs(Connection con,Patient patient) throws DalException{
         List<PatientLog> logs = new ArrayList<>();
         try{
-            con = dataAccess.getConnection();
             String sql = "SELECT * from [dbo].[trackOnPatient] where patientid  = ?  ";
             PreparedStatement prs = con.prepareStatement(sql);
             prs.setInt(1 , patient.getId());
@@ -324,10 +282,6 @@ public class DAOPatient {
             return logs;
         } catch (SQLException e) {
            throw new DalException("cant show the logs at the moment ", e);
-        }finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 }

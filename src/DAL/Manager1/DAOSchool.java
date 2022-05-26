@@ -9,17 +9,16 @@ import java.util.List;
 
 public class DAOSchool {
 
-    private final JDBCConnectionPool dataAccess;
-    private Connection con ;
+
     public DAOSchool() {
-        dataAccess = new JDBCConnectionPool();
+
     }
 
 
-    public List<School> getAllSchhol()throws DalException {
+    public List<School> getAllSchhol(Connection con)throws DalException {
         ArrayList<School> getAllSchools = new ArrayList<>();
         try{
-             con = dataAccess.getConnection();
+
             String sql = "Select * from School ";
             Statement statement = con.createStatement();
             ResultSet rs = statement.executeQuery(sql);
@@ -33,17 +32,12 @@ public class DAOSchool {
         } catch (SQLException e) {
           throw new DalException("Couldn't retrieve a list of schools " ,e);
         }
-        finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
-        }
+
     }
 
 
-    public void createSchool(School school) throws DalException{
+    public void createSchool(Connection con,School school) throws DalException{
         try {
-            con = dataAccess.getConnection();
             String sql = "insert  into [dbo].[School] (name ) values  (?)";
             PreparedStatement prs = con.prepareStatement(sql);
             prs.setString(1 , school.getName());
@@ -52,18 +46,11 @@ public class DAOSchool {
         } catch (SQLException e) {
            throw new DalException("Couldnot create a school " , e );
         }
-        finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
-        }
-
     }
 
 
-    public void updateSchool(School school )throws DalException {
+    public void updateSchool(Connection con,School school )throws DalException {
       try {
-          con = dataAccess.getConnection();
         String sql = "UPDATE School SET name = ?  where id = ? ";
         PreparedStatement prs = con.prepareStatement(sql);
         prs.setString(1, school.getName() );
@@ -71,17 +58,12 @@ public class DAOSchool {
         prs.executeUpdate();
       } catch (SQLException e) {
         throw new DalException("couldnot update school at this moment please try again later " , e );
-      }finally {
-          if(con != null){
-              dataAccess.releaseConnection(con);
-          }
       }
     }
 
 
-    public void deleteSchool(School school ) throws DalException{
+    public void deleteSchool(Connection con,School school ) throws DalException{
         try {
-            con = dataAccess.getConnection();
         String sql ="Delete from School where id = ?";
         PreparedStatement prs = con.prepareStatement(sql);
         prs.setInt(1 , school.getId() );
@@ -89,10 +71,5 @@ public class DAOSchool {
     } catch (SQLException e) {
       throw new DalException("Couldnot delete this school at this moment " , e);
     }
-        finally {
-            if(con != null){
-                dataAccess.releaseConnection(con);
-            }
-        }
     }
 }

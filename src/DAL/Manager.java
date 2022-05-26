@@ -1,15 +1,20 @@
 package DAL;
 
 import BE.*;
+import DAL.DataAccess.JDBCConnectionPool;
 import DAL.Manager1.*;
 import DAL.util.DalException;
+import com.microsoft.sqlserver.jdbc.SQLServerException;
+import org.apache.log4j.Logger;
 
+import java.sql.Connection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 public class Manager implements DALFacade {
 
+    private static final Logger LOGGER = Logger.getLogger(Manager.class);
     private final DAOCase daoCase;
     private final DAOUser daoUser;
     private final DAOPatient daoPatient;
@@ -17,8 +22,10 @@ public class Manager implements DALFacade {
     private final DAOGroup daoGroup;
     private final DAOStudentQuestion daoStudentQuestion;
     private final DaocategoryAndSubCategory daoCat ;
+    private final JDBCConnectionPool connector ;
 
     public Manager() {
+        connector = new JDBCConnectionPool();
         daoCase = new DAOCase();
         daoUser = new DAOUser();
         daoPatient = new DAOPatient();
@@ -31,132 +38,298 @@ public class Manager implements DALFacade {
 
     @Override
     public List<Case> getAllCases(int schoolid) throws DalException {
-        return daoCase.getAllCases(schoolid);
+        try {
+            Connection con = connector.getConnection();
+            return daoCase.getAllCases(con,schoolid);
+        } catch (SQLServerException e) {
+           throw new DalException("Cant get All cases",e);
+        }
+
     }
 
     @Override
     public Case createCase(Case c) throws DalException {
-        return daoCase.createCase(c);
+        try {
+            Connection con = connector.getConnection();
+            return daoCase.createCase(con ,c);
+        } catch (SQLServerException e) {
+            throw new DalException("cant create the case ",e);
+        }
+
     }
 
     @Override
     public void updateCase(Case c) throws DalException {
-        daoCase.updateCase(c);
+        try {
+            Connection con = connector.getConnection();
+            daoCase.updateCase(con ,c);
+        } catch (SQLServerException e) {
+            throw new DalException("cant update the case ",e);
+        }
     }
 
     @Override
     public void deleteCase(Case c) throws DalException {
-        daoCase.deleteCase(c);
+        try {
+            Connection con = connector.getConnection();
+            daoCase.deleteCase(con ,c);
+        } catch (SQLServerException e) {
+            throw new DalException("cant delete case ",e);
+        }
+
     }
 
     @Override
     public User verifyUsers(String useremail, String password) throws DalException {
-        return daoUser.verifyUsers(useremail, password);
+        try {
+            Connection con = connector.getConnection();
+            return daoUser.verifyUsers(con,useremail, password);
+        } catch (SQLServerException e) {
+            LOGGER.error("cant verify user " , e);
+            throw new DalException("cant verfiy the user",e);
+        }
+
     }
 
     @Override
     public List<User> getAllUsers(int schoolid) throws DalException {
-        return daoUser.getAllUsers(schoolid);
+        try {
+            Connection con = connector.getConnection();
+            return daoUser.getAllUsers(con ,schoolid);
+        } catch (SQLServerException e) {
+            throw new DalException("cant get the users ",e);
+        }
+
     }
 
     @Override
     public void updateuser(User user ) throws DalException {
-        daoUser.updateuser(user );
+        try {
+            Connection con = connector.getConnection();
+            daoUser.updateuser(con ,user);
+        } catch (SQLServerException e) {
+            throw new DalException("cant update the user ",e);
+        }
+
     }
 
     @Override
     public void deleteuser(User user) throws DalException {
-        daoUser.deleteuser(user);
+        try {
+            Connection con = connector.getConnection();
+            daoUser.deleteuser( con ,user);
+        } catch (SQLServerException e) {
+            throw new DalException("cant delete the user ",e);
+        }
+
     }
 
     @Override
     public User addUser(User user) throws DalException {
-        return daoUser.addUser(user);
+        try {
+            Connection con = connector.getConnection();
+            return daoUser.addUser(con ,user);
+        } catch (SQLServerException e) {
+            throw new DalException("cant add the user",e);
+        }
+
     }
 
     @Override
     public List<User> searchForUser(String query) throws DalException {
-        return daoUser.searchForUser(query);
+        try {
+            Connection con = connector.getConnection();
+            return daoUser.searchForUser(con,query);
+        } catch (SQLServerException e) {
+            throw new DalException("cant search for user ",e);
+        }
+
     }
 
     @Override
     public List<Patient> getAllPatients(int schoolid) throws DalException {
-        return daoPatient.getAllPatients(schoolid);
+        try {
+            Connection con = connector.getConnection();
+            return daoPatient.getAllPatients(con ,schoolid);
+        } catch (SQLServerException e) {
+            throw new DalException("cant get list of patients ",e);
+        }
+
     }
 
     @Override
     public Patient createPatient(Patient patient) throws DalException {
-        return daoPatient.createPatient(patient);
+
+        try {
+            Connection   con = connector.getConnection();
+            return daoPatient.createPatient(con ,patient);
+        } catch (SQLServerException e) {
+            throw new DalException("cant create this patient ",e);
+        }
+
     }
 
     @Override
     public void updatePatient(Patient patient) throws DalException {
-        daoPatient.updatepatient(patient);
+        try {
+            Connection con = connector.getConnection();
+            daoPatient.updatepatient(con ,patient);
+        } catch (SQLServerException e) {
+            throw new DalException("cant upadte the patient ",e);
+        }
+
     }
 
     @Override
     public void deletePatient(Patient patient) throws DalException {
-        daoPatient.deletePatient(patient);
+        try {
+            Connection con = connector.getConnection();
+            daoPatient.deletePatient(con,patient);
+        } catch (SQLServerException e) {
+            throw new DalException("cant delete the patient ",e);
+        }
+
     }
 
     @Override
     public List<School> getAllSchhol() throws DalException {
-        return daoSchool.getAllSchhol();
+        try {
+            Connection con = connector.getConnection();
+            return daoSchool.getAllSchhol(con);
+        } catch (SQLServerException e) {
+            throw new DalException("cant get the schools ",e);
+        }
+
     }
 
     @Override
     public void createSchool(School school) throws DalException {
-        daoSchool.createSchool(school);
+        try {
+            Connection con = connector.getConnection();
+            daoSchool.createSchool(con,school);
+        } catch (SQLServerException e) {
+            throw new DalException("cant create school ",e);
+        }
+
     }
 
     @Override
     public void updateSchool(School school) throws DalException {
-        daoSchool.updateSchool(school);
+        try {
+            Connection con = connector.getConnection();
+            daoSchool.updateSchool(con,school);
+        } catch (SQLServerException e) {
+            throw new DalException("cant update school ",e);
+        }
+
     }
 
     @Override
     public void deleteSchool(School school) throws DalException {
-        daoSchool.deleteSchool(school);
+        try {
+            Connection con = connector.getConnection();
+            daoSchool.deleteSchool(con,school);
+        } catch (SQLServerException e) {
+            throw new DalException("cant delete school ",e);
+        }
     }
 
     @Override
     public List<Group> getAllGroups(int schoolID) throws DalException {
-        return daoGroup.getAllGroups(schoolID);
+        Connection con = null;
+        try {
+            con =  connector.getConnection();
+            return daoGroup.getAllGroups(con, schoolID);
+        } catch (SQLServerException e) {
+          throw new DalException("cant preform this task ",e);
+        }finally {
+            if(con != null ){
+                connector.releaseConnection(con);
+            }
+        }
+
     }
 
     @Override
     public Group createGroup(Group group) throws DalException {
-        return daoGroup.createGroup(group);
+        try {
+            Connection con = connector.getConnection();
+            return daoGroup.createGroup(con ,group);
+        } catch (SQLServerException e) {
+            throw new DalException("cant create group",e);
+        }
+
     }
 
     @Override
     public void updateGroup(Group group) throws DalException {
-        daoGroup.updateGroup(group);
+        try {
+            Connection con = connector.getConnection();
+            daoGroup.updateGroup(con ,group);
+        } catch (SQLServerException e) {
+            throw new DalException("cant update group ",e);
+        }
+
     }
 
     @Override
     public void deleteGroup(Group group) throws DalException {
-        daoGroup.deleteGroup(group);
+        try {
+            Connection con = connector.getConnection();
+            daoGroup.deleteGroup(con ,group);
+        } catch (SQLServerException e) {
+            throw new DalException("cant delete group",e);
+        }
+
     }
 
     @Override
     public List<User> getUsersInGroup(int id) throws DalException {
-        return daoGroup.getUsersInGroup(id);
+        Connection con = null;
+        try {
+            con = connector.getConnection();
+            return daoGroup.getUsersInGroup(con,id);
+        } catch (SQLServerException e) {
+           throw new DalException("cant preform this task ",e);
+        }finally {
+            if(con != null){
+                connector.releaseConnection(con);
+            }
+        }
     }
 
     @Override
     public void addUsertoGroup(Group group, User user) throws DalException {
-        daoGroup.addUsertoGroup(group, user);
+        try {
+            Connection con = connector.getConnection();
+            daoGroup.addUsertoGroup(con ,group, user);
+        } catch (SQLServerException e) {
+            throw new DalException("cant add user to group",e);
+        }
+
     }
 
     @Override
     public void removeUserFromGroup(User user) throws DalException {
-        daoGroup.removeUserFromGroup(user);
+        try {
+            Connection con = connector.getConnection();
+            daoGroup.removeUserFromGroup(con ,user);
+        } catch (SQLServerException e) {
+            throw new DalException("cant remove this user ",e);
+        }
+
+
     }
 
     @Override
     public void assignCaseToGroup(Patient patient, Case assignedCase, Group group) throws DalException {
-        daoCase.assignCaseToGroup(patient,assignedCase,group);
+        try {
+            Connection con = connector.getConnection();
+            daoCase.assignCaseToGroup(con ,patient,assignedCase,group);
+        } catch (SQLServerException e) {
+            throw new DalException("cant assign to group",e);
+        }
+
     }
 
     @Override
@@ -197,17 +370,34 @@ public class Manager implements DALFacade {
 
     @Override
     public void removeUserAndGroup(User user, Group group) throws DalException {
-        daoGroup.removeUserAndGroup(user , group);
+        try {
+            Connection con = connector.getConnection();
+            daoGroup.removeUserAndGroup(con ,user , group);
+        } catch (SQLServerException e) {
+            throw new DalException("cant remove the user from group ",e);
+        }
+
     }
 
     @Override
     public List<Case> getCasesAssignedTo(Group group) throws DalException {
-        return daoCase.getCasesAssignedTo(group);
+        try {
+            Connection con = connector.getConnection();
+            return daoCase.getCasesAssignedTo(con ,group);
+        } catch (SQLServerException e) {
+            throw new DalException("cant get the cases ",e);
+        }
     }
 
     @Override
     public List<User> getAllUSERS(int schoolId ,String utype) throws DalException {
-        return daoUser.getAllUSERS(schoolId , utype);
+        try {
+            Connection con = connector.getConnection();
+            return daoUser.getAllUSERS(con ,schoolId , utype);
+        } catch (SQLServerException e) {
+          throw new DalException("cant get all users ",e);
+        }
+
     }
 
     @Override
@@ -218,7 +408,12 @@ public class Manager implements DALFacade {
 
     @Override
     public Group getGroupOf(User student) throws DalException {
-        return daoGroup.getGroupOf(student);
+        try {
+            Connection con = connector.getConnection();
+            return daoGroup.getGroupOf(con ,student);
+        } catch (SQLServerException e) {
+         throw new DalException("cant preform this task",e);
+        }
     }
 
     @Override
@@ -229,33 +424,69 @@ public class Manager implements DALFacade {
     @Override
     public List<StudentQuestion> getQuestionnaireQuestions(int questionnaireId) throws DalException {
         return daoStudentQuestion.getQuestionnaireQuestions(questionnaireId);}
+
+
     public Patient getPatientOfCase(Case selectedCase, Group group) throws DalException {
-        return daoPatient.getPatientOfCase(selectedCase, group);
+        try {
+            Connection con = connector.getConnection();
+            return daoPatient.getPatientOfCase(con ,selectedCase, group);
+        } catch (SQLServerException e) {
+         throw new  DalException("cant get the patient ",e);
+        }
     }
 
     @Override
     public void unassignCase(Case selectedItem) throws DalException {
-        daoCase.unassignCase(selectedItem);
+        try {
+            Connection con = connector.getConnection();
+            daoCase.unassignCase(con ,selectedItem);
+        } catch (SQLServerException e) {
+            throw new DalException("cant preform this task",e);
+        }
+
     }
 
     @Override
     public void markCaseAsGraded(Case selectedItem) throws DalException {
-        daoCase.markCaseAsGraded(selectedItem);
+        try {
+            Connection con = connector.getConnection();
+            daoCase.markCaseAsGraded(con ,selectedItem);
+        } catch (SQLServerException e) {
+           throw new DalException("cant preform this task ",e);
+        }
+
     }
 
     @Override
     public void unmarkCaseAsGraded(Case selectedItem) throws DalException {
-        daoCase.unmarkCaseAsGraded(selectedItem);
+        try {
+            Connection con = connector.getConnection();
+            daoCase.unmarkCaseAsGraded(con ,selectedItem);
+        } catch (SQLServerException e) {
+           throw new DalException("cant preform this task ",e);
+        }
+
     }
 
     @Override
     public List<Case> getCasesGradedOf(Group group) throws DalException {
-        return daoCase.getCasesGradedOf(group);
+        try {
+            Connection con = connector.getConnection();
+            return daoCase.getCasesGradedOf(con ,group);
+        } catch (SQLServerException e) {
+            throw new DalException("cant preform this task",e);
+        }
     }
 
     @Override
     public void addObservationToPatient(String text, Patient currentPatient) throws DalException {
-        daoPatient.addObservation(text,currentPatient);
+        try {
+            Connection con = connector.getConnection();
+            daoPatient.addObservation(con ,text,currentPatient);
+        } catch (SQLServerException e) {
+            throw new DalException("cant preform this task",e);
+        }
+
     }
 
     @Override
@@ -290,17 +521,33 @@ public class Manager implements DALFacade {
 
     @Override
     public List<PatientLog> logs(Patient patient) throws DalException {
-        return daoPatient.getLogs(patient);
+        try {
+            Connection con = connector.getConnection();
+            return daoPatient.getLogs(con ,patient);
+        } catch (SQLServerException e) {
+            throw new DalException("cant preform this task",e);
+        }
     }
 
     @Override
     public void updateLog(PatientLog patientLog, Patient patient) throws DalException {
-        daoPatient.updateLog(patientLog, patient);
+        try {
+            Connection con = connector.getConnection();
+            daoPatient.updateLog(con ,patientLog, patient);
+        } catch (SQLServerException e) {
+            throw new DalException("cant preform this task",e);
+        }
+
     }
 
     @Override
     public void addLog(PatientLog patientLog) throws DalException {
-        daoPatient.addLog(patientLog);
+        try {
+            Connection con = connector.getConnection();
+            daoPatient.addLog(con ,patientLog);
+        } catch (SQLServerException e) {
+            throw new DalException("cant preform this task",e);
+        }
     }
 
 }

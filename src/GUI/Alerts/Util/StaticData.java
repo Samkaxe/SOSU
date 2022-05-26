@@ -1,4 +1,4 @@
-package GUI.Util;
+package GUI.Alerts.Util;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
