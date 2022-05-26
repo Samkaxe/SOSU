@@ -18,8 +18,8 @@ public class BLLManager implements BLLFacade {
 
     private DALFacade dalFacade;
 
-    public BLLManager() {
-        dalFacade = new Manager();
+    public BLLManager(DALFacade dalFacade) {
+        this.dalFacade=dalFacade;
     }
 
     @Override

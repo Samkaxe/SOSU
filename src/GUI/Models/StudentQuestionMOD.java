@@ -4,6 +4,7 @@ import BE.*;
 import BLL.BLLFacade;
 import BLL.BLLManager;
 import BLL.Exceptions.BLLException;
+import DAL.Manager;
 import DAL.util.DalException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,7 +20,7 @@ public class StudentQuestionMOD {
     private static final StudentQuestionMOD QUESTIONSingleton = new StudentQuestionMOD();
 
     public StudentQuestionMOD() {
-        bll = new BLLManager();
+        bll = new BLLManager(new Manager());
     }
 
     public static StudentQuestionMOD getInstance() {

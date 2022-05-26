@@ -3,6 +3,7 @@ package GUI.Models;
 import BE.School;
 import BE.User;
 import BLL.BLLManager;
+import DAL.Manager;
 import DAL.util.DalException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +18,7 @@ public class AdminMOD {
     private ObservableList<User> users;
 
     public AdminMOD(){
-        manager = new BLLManager();
+        manager = new BLLManager(new Manager());
     }
 
     public static AdminMOD getInstance() {

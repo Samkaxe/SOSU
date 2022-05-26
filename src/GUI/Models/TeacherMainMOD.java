@@ -6,6 +6,7 @@ import BE.Patient;
 import BE.User;
 import BLL.BLLFacade;
 import BLL.BLLManager;
+import DAL.Manager;
 import DAL.util.DalException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,7 +31,7 @@ public class TeacherMainMOD {
     }
 
     private TeacherMainMOD() {
-        bllFacade = new BLLManager();
+        bllFacade = new BLLManager(new Manager());
         allGroups = FXCollections.observableArrayList();
         allCases = FXCollections.observableArrayList();
         casesAssigned = FXCollections.observableArrayList();

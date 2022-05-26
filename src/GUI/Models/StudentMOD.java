@@ -6,6 +6,7 @@ import BE.Patient;
 import BE.User;
 import BLL.BLLFacade;
 import BLL.BLLManager;
+import DAL.Manager;
 import DAL.util.DalException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +18,7 @@ public class StudentMOD {
     private ObservableList<Case> casesGraded;
 
     public StudentMOD() {
-        bllFacade = new BLLManager();
+        bllFacade = new BLLManager(new Manager());
         casesAssigned = FXCollections.observableArrayList();
         casesGraded = FXCollections.observableArrayList();
     }

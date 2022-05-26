@@ -3,6 +3,7 @@ package GUI.Models;
 import BE.Patient;
 import BLL.BLLFacade;
 import BLL.BLLManager;
+import DAL.Manager;
 import DAL.util.DalException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,7 +13,7 @@ public class NewPatientMOD {
     private BLLFacade bllFacade;
 
     public NewPatientMOD(){
-        bllFacade = new BLLManager();
+        bllFacade = new BLLManager(new Manager());
     }
 
     public Patient createPatient(Patient patient)throws DalException {
