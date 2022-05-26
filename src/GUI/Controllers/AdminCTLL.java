@@ -88,7 +88,6 @@ public class AdminCTLL implements Initializable {
         displaySchools();
         navigateBetweenNode();
         menuOption();
-        // task();
     }
 
     public void displaySchools(){
@@ -112,23 +111,8 @@ public class AdminCTLL implements Initializable {
         }
     }
 
-    public void task(){
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    schoolTalbeView.setItems(adminMOD.getAllSchools());
-                } catch (DalException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-    }
 
     public void filterField(KeyEvent keyEvent)  {
-        // Paint value0 = Paint.valueOf("#FE776F");
-      // filterid.setStyle(value0.toString());
-
             try {
                 if (filterid.getText() == null || filterid.getText().length() <= 0) {
                 teacherTableView.setItems(adminMOD.getallusers(schoolTalbeView.getSelectionModel().getSelectedItem().getId() ,"TEACHER"));

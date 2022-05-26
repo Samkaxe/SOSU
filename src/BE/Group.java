@@ -85,14 +85,5 @@ public class Group {
         this.members.remove(user);
     }
 
-    @Override
-    public String toString() {
-        return "Group{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", members=" + members +
-                ", SchoolID=" + schoolId +
-                '}';
-    }
 }
 

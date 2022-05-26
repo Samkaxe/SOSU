@@ -104,14 +104,5 @@ public interface DALFacade {
 
     int getQuestionnaireOf(int caseId, int groupId) throws DalException;
 
-    List<Category> getAllCategories()throws DalException;
-
-    List<SubCategory> getAllSubCategories(int catid) throws DalException;
-
-    List<PatientLog> logs(Patient patient)throws DalException;
-
-    void updateLog(PatientLog patientLog , Patient patient)throws DalException;
-
-    void addLog(PatientLog patientLog ) throws DalException;
 
 }

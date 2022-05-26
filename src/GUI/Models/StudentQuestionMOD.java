@@ -15,8 +15,6 @@ import java.util.List;
 public class StudentQuestionMOD {
     private static BLLFacade bll;
     private int questionnaireId;     //to store current questionaire Id to use in answers
-    private ObservableList<Category> categories ;
-    private ObservableList<SubCategory> subCategories;
     private static final StudentQuestionMOD QUESTIONSingleton = new StudentQuestionMOD();
 
     public StudentQuestionMOD() {
@@ -109,25 +107,4 @@ public class StudentQuestionMOD {
         return -1;
     }
 
-    public ObservableList<Category> categories() throws DalException{
-        categories = FXCollections.observableArrayList();
-        categories.addAll(bll.getAllCategories());
-
-        return categories;
-    }
-
-    public ObservableList<SubCategory> subCategories(int catid)throws DalException{
-        subCategories = FXCollections.observableArrayList();
-        subCategories.addAll(bll.getAllSubCategories(catid));
-
-        return subCategories;
-    }
-
-    public void addnewLog(PatientLog patientLog )throws DalException{
-        try {
-            bll.addLog(patientLog);
-        } catch (DalException e) {
-            throw new DalException("cant create Log at the moment ",e);
-        }
-    }
 }

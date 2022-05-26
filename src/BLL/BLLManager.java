@@ -105,13 +105,11 @@ public class BLLManager implements BLLFacade {
     @Override
     public void removeParticipant(Group group, User user) throws DalException {
         dalFacade.removeUserAndGroup(user, group);
-        //TODO Implement
     }
 
     @Override
     public void updateCase(Case newCase) throws DalException {
         dalFacade.updateCase(newCase);
-        //TODO implement
     }
 
     @Override
@@ -158,8 +156,6 @@ public class BLLManager implements BLLFacade {
     @Override
     public List<Case> getCasesAssignedTo(Group group) throws DalException {
         return dalFacade.getCasesAssignedTo(group);
-        //TODO IMPLEMENT
-
     }
 
     @Override
@@ -243,30 +239,6 @@ public class BLLManager implements BLLFacade {
         return dalFacade.getQuestionnaireOf(caseId,groupId);
     }
 
-    @Override
-    public List<Category> getAllCategories() throws DalException {
-        return dalFacade.getAllCategories();
-    }
-
-    @Override
-    public List<SubCategory> getAllSubCategories(int catid) throws DalException {
-        return dalFacade.getAllSubCategories(catid);
-    }
-
-    @Override
-    public List<PatientLog> logs(Patient patient) throws DalException {
-        return dalFacade.logs(patient);
-    }
-
-    @Override
-    public void updateLog(PatientLog patientLog, Patient patient) throws DalException {
-            dalFacade.updateLog(patientLog , patient);
-    }
-
-    @Override
-    public void addLog(PatientLog patientLog) throws DalException {
-            dalFacade.addLog(patientLog );
-    }
 
     @Override
     public void saveStudentQuestionAnswer(StudentQuestionnaireAnswer answer) throws DalException {

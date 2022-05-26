@@ -97,6 +97,7 @@ public class Case {
     public boolean getIsCopy() {
         return isCopy;
     }
+
     public int getIsCopyDB(){
         if(!this.isCopy){
             return 0;
@@ -111,15 +112,4 @@ public class Case {
         isCopy = copy;
     }
 
-    @Override
-    public String toString() {
-        return "Case{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", conditionDescription='" + conditionDescription + '\'' +
-                ", category='" + category + '\'' +
-                ", subCategory='" + subCategory + '\'' +
-                ", schoolID=" + schoolID +
-                '}';
-    }
 }

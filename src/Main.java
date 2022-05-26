@@ -22,8 +22,6 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch();
-        //String log4jConfPath = System.getProperty("user.dir")+"/src/DAL/DataAccess/log4j.properties";
-        //String log4jConfPath = "/src/DAL/DataAccess/log4j.properties";
-        //PropertyConfigurator.configure(log4jConfPath);
+        
     }
 }

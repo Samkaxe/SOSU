@@ -268,30 +268,6 @@ public class DalMock implements DALFacade {
         return 0;
     }
 
-    @Override
-    public List<Category> getAllCategories() throws DalException {
-        return null;
-    }
-
-    @Override
-    public List<SubCategory> getAllSubCategories(int catid) throws DalException {
-        return null;
-    }
-
-    @Override
-    public List<PatientLog> logs(Patient patient) throws DalException {
-        return null;
-    }
-
-    @Override
-    public void updateLog(PatientLog patientLog, Patient patient) throws DalException {
-
-    }
-
-    @Override
-    public void addLog(PatientLog patientLog) throws DalException {
-
-    }
 
     public StudentQuestion getSampleStudentQuestion() {
         return new StudentQuestion(1,"cat1","title","houw are you","blue");

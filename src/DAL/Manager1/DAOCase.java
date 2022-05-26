@@ -78,7 +78,6 @@ public class DAOCase {
 
     public void assignCaseToGroup(Connection con,Patient patient, Case assignedCase, Group group) throws DalException {
         try{
-
             String sql = "INSERT INTO [Case] (Description_of_the_condition,CategoryName,SubCategoryName,[name],schoolid,isCopy) VALUES (?,?,?,?,?,?)";
             String sql2 = "SELECT [id] FROM [Case] WHERE [name] = ? AND [isCopy] = ?";
             String sql3 = "INSERT INTO [Patient] (first_name, last_name, dateofBirth, gender,weight ,height ,cpr , phone_number, schoolid, isCopy) VALUES (?,?,?,?,?,?,?,?,?,?)";
@@ -212,7 +211,6 @@ public class DAOCase {
 
     public void markCaseAsGraded(Connection con,Case selectedItem) throws DalException {
         try{
-
             String sql = "UPDATE [SickPatient] SET [graded] = ? WHERE [caseid] = ?";
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1,isTrue);
@@ -225,7 +223,6 @@ public class DAOCase {
 
     public void unmarkCaseAsGraded(Connection con,Case selectedItem) throws DalException{
         try{
-
             String sql = "UPDATE [SickPatient] SET [graded] = ? WHERE [caseid] = ?";
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1, isFalse);

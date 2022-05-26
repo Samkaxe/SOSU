@@ -8,15 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DAOStudentQuestion {
-    private final JDBCConnectionPool dataAccess;
-    private Connection con ;
+
     public DAOStudentQuestion() {
-        dataAccess = new JDBCConnectionPool();
+
     }
 
-    public void addStudentQuestionAnswer(StudentQuestionnaireAnswer answer) throws DalException {  //to save question answer in answer table
+    public void addStudentQuestionAnswer(Connection con ,StudentQuestionnaireAnswer answer) throws DalException {  //to save question answer in answer table
         try  {
-            con = dataAccess.getConnection();
+
             String sql = "insert  into [dbo].[StudentQuestionAnswer] (questionId,state,questionaireId )values  (?,?,?)";
             PreparedStatement prs = con.prepareStatement(sql);
             prs.setInt(1, answer.getQuestionId());
@@ -26,16 +25,12 @@ public class DAOStudentQuestion {
 
         } catch (SQLException e) {
             throw new DalException("Couldn't pass this Answer please try again later   ", e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public int addQuestionaire() throws DalException {              //to create new questionnaire and save it in database
+    public int addQuestionaire(Connection con) throws DalException {              //to create new questionnaire and save it in database
         try  {
-            con = dataAccess.getConnection();
+
             String sql = "insert  into [dbo].[Questionaire] (date )values  (getdate())";  //id is identity and will be generated in database and we save only current date
             PreparedStatement prs = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);  // RETURN_GENERATED_KEYS is for returning generated questionnaire id
             prs.execute();
@@ -45,17 +40,12 @@ public class DAOStudentQuestion {
 
         } catch (SQLException e) {
             throw new DalException("Couldn't add Questionaire ", e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public List<StudentQuestion> getAllQuestions() throws DalException {
+    public List<StudentQuestion> getAllQuestions(Connection con) throws DalException {
         List<StudentQuestion> studentQuestions = new ArrayList<>();
         try {
-            con = dataAccess.getConnection();
             String sql = "Select * from StudentQuestion ";
             Statement statement = con.createStatement();
             ResultSet rs = statement.executeQuery(sql);
@@ -70,17 +60,12 @@ public class DAOStudentQuestion {
             return studentQuestions;
         } catch (SQLException e) {
             throw new DalException("Couldn't retrieve a list of Questions ", e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public StudentQuestionnaireAnswer getQuestionaireAnswer(int questionId, int questionaireId) throws DalException {
+    public StudentQuestionnaireAnswer getQuestionaireAnswer(Connection con,int questionId, int questionaireId) throws DalException {
 
         try {
-            con = dataAccess.getConnection();
             String sql = " Select * from StudentQuestionAnswer  where questionId=? and QuestionaireId=? ";
             PreparedStatement prs = con.prepareStatement(sql);
             prs.setInt(1,questionId);
@@ -98,14 +83,10 @@ public class DAOStudentQuestion {
             return answer;
         } catch (SQLException e) {
             throw new DalException("Couldn't retrieve a list of Questions ", e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public StudentQuestionnaire getQuestionnaireOf(Group group) throws DalException {
+    public StudentQuestionnaire getQuestionnaireOf(Connection con,Group group) throws DalException {
         String query="\n" +
                 "select q.* from Groups g \n" +
                 "join GroupUsers gu on g.id=gu.Groupid\n" +
@@ -114,7 +95,6 @@ public class DAOStudentQuestion {
                 " where g.id=?";
 
         try {
-            con = dataAccess.getConnection();
             PreparedStatement prs = con.prepareStatement(query);
             prs.setInt(1,group.getId());
             StudentQuestionnaire questionnaire = new StudentQuestionnaire();
@@ -128,21 +108,16 @@ public class DAOStudentQuestion {
             return questionnaire;
         } catch (SQLException e) {
             throw new DalException("Couldn't retrieve a list of Questions ", e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public List<StudentQuestion> getQuestionnaireQuestions(int questionnaireId) throws DalException { //get all questions that exist in specific questionnaire
+    public List<StudentQuestion> getQuestionnaireQuestions(Connection con,int questionnaireId) throws DalException { //get all questions that exist in specific questionnaire
         List<StudentQuestion> studentQuestions=new ArrayList<>();
         String query="\n" +
                 "  select q.category,q.title,q.question,q.color,qa.id,qa.questionId,qa.state,qa.QuestionaireId from StudentQuestion q\n" +
                 "  join StudentQuestionAnswer qa on q.id=qa.questionId\n" +
                 "  where qa.QuestionaireId=?";
         try  {
-            con = dataAccess.getConnection();
             PreparedStatement prs = con.prepareStatement(query);
             prs.setInt(1,questionnaireId);
             ResultSet rs = prs.executeQuery();
@@ -165,17 +140,13 @@ public class DAOStudentQuestion {
             return studentQuestions;
         } catch (SQLException e) {
             throw new DalException("Couldn't retrieve a list of Questions ", e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public StudentQuestionnaire getQuestionnaire(int questionnaireId) throws DalException {
+    public StudentQuestionnaire getQuestionnaire(Connection con ,int questionnaireId) throws DalException {
         String query="select * from [Questionaire] where id=?";
         try {
-            con = dataAccess.getConnection();
+
             PreparedStatement prs = con.prepareStatement(query);
             prs.setInt(1,questionnaireId);
             ResultSet rs = prs.executeQuery();
@@ -187,18 +158,13 @@ public class DAOStudentQuestion {
             }
         } catch (SQLException e) {
             throw new DalException("Couldn't retrieve a list of Questions ", e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
         return null;
     }
 
-    public int getSickPatientId(Patient currentPatient, Case currentCase, Group currentGroup) throws DalException {
+    public int getSickPatientId(Connection con ,Patient currentPatient, Case currentCase, Group currentGroup) throws DalException {
         String query="select SickPatientid from SickPatient where patientid=? and caseid=? and Groupid=?";
         try  {
-            con = dataAccess.getConnection();
             PreparedStatement prs = con.prepareStatement(query);
             prs.setInt(1,currentPatient.getId());
             prs.setInt(2,currentCase.getId());
@@ -212,18 +178,14 @@ public class DAOStudentQuestion {
             }
         } catch (SQLException e) {
             throw new DalException("Couldn't retrieve a list of Questions ", e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
         return -1;
     }
 
-    public void updateQuestionnaireSickPatient(StudentQuestionnaire questionnaire) throws DalException {
+    public void updateQuestionnaireSickPatient(Connection con ,StudentQuestionnaire questionnaire) throws DalException {
         String query="update Questionaire set SickPatientId=? where id=?";
         try {
-            con = dataAccess.getConnection();
+
             PreparedStatement prs = con.prepareStatement(query);
             prs.setInt(1,questionnaire.getSickPatientId());
             prs.setInt(2,questionnaire.getId());
@@ -232,21 +194,17 @@ public class DAOStudentQuestion {
 
         } catch (SQLException e) {
             throw new DalException("Couldn't retrieve a list of Questions ", e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
     }
 
-    public int getQuestionnaireOf(int caseId, int groupId) throws DalException {
+    public int getQuestionnaireOf(Connection con ,int caseId, int groupId) throws DalException {
         String query="select max(id) as qId\n" +
                 "                 from SickPatient sp\n" +
                 "                join Questionaire q on q.SickPatientId=sp.SickPatientid\n" +
                 "                 where sp.Groupid=? and sp.caseid=?";
 
         try {
-            con = dataAccess.getConnection();
+
             PreparedStatement prs = con.prepareStatement(query);
             prs.setInt(1,groupId);
             prs.setInt(2,caseId);
@@ -258,10 +216,6 @@ public class DAOStudentQuestion {
             }
         } catch (SQLException e) {
             throw new DalException("Couldn't retrieve a list of Questions ", e);
-        }finally {
-            if(con != null) {
-                dataAccess.releaseConnection(con);
-            }
         }
         return 0;
     }

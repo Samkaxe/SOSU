@@ -5,11 +5,9 @@ public class StudentQuestion {
     private String category;
     private String title;
     private String question;
-
     private int questionaireId;
     private String color;
     private StudentQuestionnaireAnswer answer;
-
 
     public StudentQuestion(int id, String category, String title, String question, String color) {
         this.id = id;
@@ -67,25 +65,8 @@ public class StudentQuestion {
         this.question = question;
     }
 
-
-
-
     public void setQuestionaireId(int questionaireId) {
         this.questionaireId=questionaireId;
-    }
-
-
-
-    @Override
-    public String toString() {
-        return "StudentQuestion{" +
-                "id=" + id +
-                ", category='" + category + '\'' +
-                ", title='" + title + '\'' +
-                ", question='" + question + '\'' +
-
-                ", questionaireId=" + questionaireId +
-                '}';
     }
 
     public String getColor() {

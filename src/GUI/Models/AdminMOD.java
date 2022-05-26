@@ -89,7 +89,6 @@ public class AdminMOD {
     }
     public ObservableList<User> getallusers(int schoolid , String utype) throws DalException {
       users = FXCollections.observableArrayList();
-      //users.addAll(manager.getAllUSERS(schoolid , utype));
       if(utype.equals("TEACHER")){
           return teachers;
       }else {
