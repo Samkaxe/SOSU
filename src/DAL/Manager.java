@@ -124,7 +124,7 @@ public class Manager implements DALFacade {
        Connection con = null ;
         try {
              con = connector.getConnection();
-            return daoUser.getAllUsers(con ,schoolid);
+            return daoUser.getAllUSERS(con ,schoolid ,"STUDENT");
         } catch (SQLServerException e) {
             LOGGER.error("cant get the users ",e);
             throw new DalException("cant get the users ",e);
@@ -179,23 +179,6 @@ public class Manager implements DALFacade {
         } catch (SQLServerException e) {
             LOGGER.error("cant add the user ",e);
             throw new DalException("cant add the user",e);
-        }finally {
-            if(con != null) {
-                connector.releaseConnection(con);
-            }
-        }
-
-    }
-
-    @Override
-    public List<User> searchForUser(String query) throws DalException {
-       Connection con = null ;
-        try {
-             con = connector.getConnection();
-            return daoUser.searchForUser(con,query);
-        } catch (SQLServerException e) {
-            LOGGER.error("cant serach for user ",e);
-            throw new DalException("cant search for user ",e);
         }finally {
             if(con != null) {
                 connector.releaseConnection(con);
@@ -408,22 +391,6 @@ public class Manager implements DALFacade {
     }
 
     @Override
-    public List<User> getUsersInGroup(int id) throws DalException {
-        Connection con = null;
-        try {
-            con = connector.getConnection();
-            return daoGroup.getUsersInGroup(con,id);
-        } catch (SQLServerException e) {
-            LOGGER.error("cant preform this task",e);
-           throw new DalException("cant preform this task ",e);
-        }finally {
-            if(con != null){
-                connector.releaseConnection(con);
-            }
-        }
-    }
-
-    @Override
     public void addUsertoGroup(Group group, User user) throws DalException {
         Connection con = null ;
         try {
@@ -437,24 +404,6 @@ public class Manager implements DALFacade {
                 connector.releaseConnection(con);
             }
         }
-
-    }
-
-    @Override
-    public void removeUserFromGroup(User user) throws DalException {
-       Connection con = null ;
-        try {
-             con = connector.getConnection();
-            daoGroup.removeUserFromGroup(con ,user);
-        } catch (SQLServerException e) {
-            LOGGER.error("cant remove this user",e);
-            throw new DalException("cant remove this user ",e);
-        }finally {
-            if(con != null) {
-                connector.releaseConnection(con);
-            }
-        }
-
 
     }
 
@@ -617,12 +566,6 @@ public class Manager implements DALFacade {
         }
 
     }
-
-    @Override
-    public List<User> getALLUsers(int schoolid, String utype) throws DalException {
-        return null;
-    }
-
 
     @Override
     public Group getGroupOf(User student) throws DalException {

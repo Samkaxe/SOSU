@@ -132,15 +132,48 @@ public class AdminCTLL implements Initializable {
             }
     }
 
-    public void createSchoolbtn(ActionEvent event) {
+
+
+    public void menuOption(){
+        addSchool.setOnAction(event -> {
+            addSchool();
+
+        });
+
+        addTeacher.setOnAction(event -> {
+         addTeacher();
+        });
+
+        addStudent.setOnAction(event -> {
+           addStudent();
+        });
+
+        updateSchool.setOnAction(event -> {
+            updateSchool();
+        });
+
+        updateTeacher.setOnAction(event -> {
+            updateteacher();
+        });
+
+        deleteUser.setOnAction(event -> {
+            deleteuser();
+        });
+
+        deleteSchool.setOnAction(event -> {
+            deleteschool();
+        });
+
+    }
+
+    private void addSchool(){
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(0, 10, 0, 10));
         final javafx.scene.control.TextField name = new TextField();
-        name.setPromptText("Username");
         Button button = new Button();
-        button.setText("Create");
+        button.setText("Tilføj skole");
         grid.add(new Label("name:"), 0, 0);
         grid.add(name, 1, 0);
         grid.add(button, 1, 2);
@@ -152,147 +185,111 @@ public class AdminCTLL implements Initializable {
             try {
                 adminMOD.createSchools(name.getText());
             } catch (DalException e) {
-              new ConfirmationAlert("please insert valid name");
+                new ConfirmationAlert("please insert valid name");
             }
         });
     }
-
-    public void menuOption(){
-        addSchool.setOnAction(event -> {
-                GridPane grid = new GridPane();
-                grid.setHgap(10);
-                grid.setVgap(10);
-                grid.setPadding(new Insets(0, 10, 0, 10));
-                final javafx.scene.control.TextField name = new TextField();
-                Button button = new Button();
-                button.setText("Tilføj skole");
-                grid.add(new Label("name:"), 0, 0);
-                grid.add(name, 1, 0);
-                grid.add(button, 1, 2);
-                Stage stage = new Stage();
-                Scene scene = new Scene(grid);
-                stage.setScene(scene);
-                stage.show();
-                button.setOnAction(event1 -> {
-                    try {
-                        adminMOD.createSchools(name.getText());
-                    } catch (DalException e) {
-                        new ConfirmationAlert("please insert valid name");
-                    }
-                });
-
+    private void addTeacher(){
+        iWillInsertYou("TEACHER");
+    }
+    private void addStudent(){
+        iWillInsertYou("STUDENT");
+    }
+    private void updateSchool(){
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(0, 10, 0, 10));
+        final javafx.scene.control.TextField name = new TextField();
+        name.setText(schoolTalbeView.getSelectionModel().getSelectedItem().getName());
+        Button button = new Button();
+        button.setText("Update");
+        grid.add(new Label("name:"), 0, 0);
+        grid.add(name, 1, 0);
+        grid.add(button, 1, 2);
+        Stage stage = new Stage();
+        Scene scene = new Scene(grid);
+        stage.setScene(scene);
+        stage.show();
+        button.setOnAction(event1 -> {
+            try {
+                schoolTalbeView.getSelectionModel().getSelectedItem().setName(name.getText());
+                adminMOD.updateSchool(schoolTalbeView.getSelectionModel().getSelectedItem());
+            } catch (DalException e) {
+                new ConfirmationAlert("please insert valid name");
+            }
         });
-
-        addTeacher.setOnAction(event -> {
-            iWillInsertYou("TEACHER");
-        });
-
-        addStudent.setOnAction(event -> {
-            iWillInsertYou("STUDENT");
-        });
-
-        updateSchool.setOnAction(event -> {
+    }
+    private void updateteacher(){
+        if(teacherTableView.getSelectionModel().getSelectedIndex() != -1) {
             GridPane grid = new GridPane();
             grid.setHgap(10);
             grid.setVgap(10);
             grid.setPadding(new Insets(0, 10, 0, 10));
-            final javafx.scene.control.TextField name = new TextField();
-            name.setText(schoolTalbeView.getSelectionModel().getSelectedItem().getName());
+            final javafx.scene.control.TextField username = new TextField();
+            username.setText(teacherTableView.getSelectionModel().getSelectedItem().getName());
+            final javafx.scene.control.TextField email = new TextField();
+            email.setText(teacherTableView.getSelectionModel().getSelectedItem().getEmail());
+            final javafx.scene.control.TextField school = new TextField();
+            school.setText(String.valueOf(teacherTableView.getSelectionModel().getSelectedItem().getSchoolID()));
             Button button = new Button();
             button.setText("Update");
-            grid.add(new Label("name:"), 0, 0);
-            grid.add(name, 1, 0);
-            grid.add(button, 1, 2);
+            grid.add(new Label("Username:"), 0, 0);
+            grid.add(username, 1, 0);
+            grid.add(new Label("email:"), 0, 1);
+            grid.add(email, 1, 1);
+            grid.add(new Label("school"), 0, 2);
+            grid.add(school, 1, 2);
+            grid.add(button, 2, 2);
             Stage stage = new Stage();
             Scene scene = new Scene(grid);
             stage.setScene(scene);
             stage.show();
             button.setOnAction(event1 -> {
+                int i = Integer.parseInt(String.valueOf(school.getText()));
+
                 try {
-                    schoolTalbeView.getSelectionModel().getSelectedItem().setName(name.getText());
-                    adminMOD.updateSchool(schoolTalbeView.getSelectionModel().getSelectedItem());
+
+                    teacherTableView.getSelectionModel().getSelectedItem().setName(username.getText());
+                    teacherTableView.getSelectionModel().getSelectedItem().setEmail(email.getText());
+                    teacherTableView.getSelectionModel().getSelectedItem().setSchoolID(i);
+                    adminMOD.updateUser(teacherTableView.getSelectionModel().getSelectedItem());
                 } catch (DalException e) {
-                    new ConfirmationAlert("please insert valid name");
+                    new ConfirmationAlert("please enter valid data ");
                 }
             });
-        });
-
-        updateTeacher.setOnAction(event -> {
-            if(teacherTableView.getSelectionModel().getSelectedIndex() != -1) {
-                GridPane grid = new GridPane();
-                grid.setHgap(10);
-                grid.setVgap(10);
-                grid.setPadding(new Insets(0, 10, 0, 10));
-                final javafx.scene.control.TextField username = new TextField();
-                username.setText(teacherTableView.getSelectionModel().getSelectedItem().getName());
-                final javafx.scene.control.TextField email = new TextField();
-                email.setText(teacherTableView.getSelectionModel().getSelectedItem().getEmail());
-                final javafx.scene.control.TextField school = new TextField();
-                school.setText(String.valueOf(teacherTableView.getSelectionModel().getSelectedItem().getSchoolID()));
-                Button button = new Button();
-                button.setText("Update");
-                grid.add(new Label("Username:"), 0, 0);
-                grid.add(username, 1, 0);
-                grid.add(new Label("email:"), 0, 1);
-                grid.add(email, 1, 1);
-                grid.add(new Label("school"), 0, 2);
-                grid.add(school, 1, 2);
-                grid.add(button, 2, 2);
-                Stage stage = new Stage();
-                Scene scene = new Scene(grid);
-                stage.setScene(scene);
-                stage.show();
-                button.setOnAction(event1 -> {
-                    int i = Integer.parseInt(String.valueOf(school.getText()));
-
-                    try {
-
-                        teacherTableView.getSelectionModel().getSelectedItem().setName(username.getText());
-                        teacherTableView.getSelectionModel().getSelectedItem().setEmail(email.getText());
-                        teacherTableView.getSelectionModel().getSelectedItem().setSchoolID(i);
-                        adminMOD.updateUser(teacherTableView.getSelectionModel().getSelectedItem());
-                    } catch (DalException e) {
-                        new ConfirmationAlert("please enter valid data ");
-                    }
-                });
+        }
+    }
+    private  void deleteuser(){
+        if(teacherTableView.getSelectionModel().getSelectedIndex() != -1 ){
+            try {
+                adminMOD.removeUser(teacherTableView.getSelectionModel().getSelectedItem());
+                teacherTableView.setItems(adminMOD.getAllTeachers(teacherTableView.getSelectionModel().getSelectedItem().getSchoolID()));
+            } catch (DalException e) {
+                new ConfirmationAlert("please Select teacher");
             }
-        });
-
-        deleteUser.setOnAction(event -> {
-            if(teacherTableView.getSelectionModel().getSelectedIndex() != -1 ){
-                try {
-                    adminMOD.removeUser(teacherTableView.getSelectionModel().getSelectedItem());
-                    teacherTableView.setItems(adminMOD.getAllTeachers(teacherTableView.getSelectionModel().getSelectedItem().getSchoolID()));
-                } catch (DalException e) {
-                    new ConfirmationAlert("please Select teacher");
-                }
+        }
+        else if(StudentTableView.getSelectionModel().getSelectedIndex() != -1){
+            try {
+                adminMOD.removeUser(StudentTableView.getSelectionModel().getSelectedItem());
+                StudentTableView.setItems(adminMOD.getAllSudents(StudentTableView.getSelectionModel().getSelectedItem().getSchoolID()));
+            } catch (DalException e) {
+                new ConfirmationAlert("please Select Student");
             }
-           else if(StudentTableView.getSelectionModel().getSelectedIndex() != -1){
-                try {
-                    adminMOD.removeUser(StudentTableView.getSelectionModel().getSelectedItem());
-                    StudentTableView.setItems(adminMOD.getAllSudents(StudentTableView.getSelectionModel().getSelectedItem().getSchoolID()));
-                } catch (DalException e) {
-                    new ConfirmationAlert("please Select Student");
-                }
+        }
+    }
+    private void deleteschool(){
+        if(schoolTalbeView.getSelectionModel().getSelectedIndex() != -1){
+            try {
+                adminMOD.deleteSchool(schoolTalbeView.getSelectionModel().getSelectedItem());
+            } catch (DalException e) {
+                new ConfirmationAlert("please Select School");
             }
-        });
-
-        deleteSchool.setOnAction(event -> {
-            if(schoolTalbeView.getSelectionModel().getSelectedIndex() != -1){
-                try {
-                    adminMOD.deleteSchool(schoolTalbeView.getSelectionModel().getSelectedItem());
-                } catch (DalException e) {
-                    new ConfirmationAlert("please Select School");
-                }
-            }
-        });
-
-        help.setOnAction(event -> {
-            new ConfirmationAlert("Ctrl + S : Tilføj skole \nCtrl + L : Tilføj lærer \nCtrl + E : Tilføj elev  " );
-        });
+        }
     }
 
-    public void iWillInsertYou(String text){
+
+    private void iWillInsertYou(String text){
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -329,45 +326,7 @@ public class AdminCTLL implements Initializable {
         });
     }
 
-    public void createTeacherBtn(ActionEvent event) {
-        iWillInsertYou("TEACHER");
-    }
 
-    public void createStudentBTN(ActionEvent event) {
-        iWillInsertYou("STUDENT");
-    }
-
-    public void deleteSchoolbtn(ActionEvent event) {
-        try {
-            if(schoolTalbeView.getSelectionModel().getSelectedIndex() != -1)
-            adminMOD.deleteSchool(schoolTalbeView.getSelectionModel().getSelectedItem());
-        } catch (DalException e) {
-            new ConfirmationAlert("please select school ");
-        }
-    }
-
-    public void deleteTeacherBtn(ActionEvent event) {
-            try {
-                if(teacherTableView.getSelectionModel().getSelectedIndex() != -1 ) {
-                    adminMOD.removeUser(teacherTableView.getSelectionModel().getSelectedItem());
-                   teacherTableView.setItems(adminMOD.getAllTeachers(teacherTableView.getSelectionModel().getSelectedItem().getSchoolID()));
-                }
-            } catch (DalException e) {
-               new ConfirmationAlert("please select a Teacher ");
-            }
-
-    }
-
-    public void deleteStudentbtn(ActionEvent event) {
-        try {
-            if(StudentTableView.getSelectionModel().getSelectedIndex() != -1 ) {
-                adminMOD.removeUser(StudentTableView.getSelectionModel().getSelectedItem());
-                StudentTableView.setItems(adminMOD.getAllSudents(StudentTableView.getSelectionModel().getSelectedItem().getSchoolID()));
-            }
-        } catch (DalException e) {
-            new ConfirmationAlert("please select a Student ");
-        }
-    }
 
     public void ClloseBtn(ActionEvent event) {
         Stage st = (Stage) Closeid.getScene().getWindow();
@@ -397,7 +356,7 @@ public class AdminCTLL implements Initializable {
         }
     }
 
-    public void navigateBetweenNode() {
+    private void navigateBetweenNode() {
         anchorpane.setOnContextMenuRequested(event -> {
             if (event.getTarget().getClass() == AnchorPane.class) {
                 changeOptionAnchorPane();

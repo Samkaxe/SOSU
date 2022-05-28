@@ -50,12 +50,6 @@
          </font></Label>
       <TextField fx:id="filterid" layoutX="702.0" layoutY="22.0" onKeyPressed="#filterField" prefHeight="25.0" prefWidth="164.0" promptText="Søg" />
       <ImageView fx:id="filterImageid" fitHeight="24.0" fitWidth="24.0" layoutX="668.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true" />
-      <Button layoutX="24.0" layoutY="540.0" mnemonicParsing="false" onAction="#createSchoolbtn" prefHeight="25.0" prefWidth="146.0" text="Tilføj skole" />
-      <Button layoutX="196.0" layoutY="540.0" mnemonicParsing="false" onAction="#createTeacherBtn" prefHeight="25.0" prefWidth="146.0" text="Tilføj lærer" />
-      <Button layoutX="514.0" layoutY="540.0" mnemonicParsing="false" onAction="#createStudentBTN" prefHeight="25.0" prefWidth="164.0" text="Tilføj elev" />
-      <Button layoutX="24.0" layoutY="565.0" mnemonicParsing="false" onAction="#deleteSchoolbtn" prefHeight="25.0" prefWidth="146.0" text="Slet skole" />
-      <Button layoutX="196.0" layoutY="565.0" mnemonicParsing="false" onAction="#deleteTeacherBtn" prefHeight="25.0" prefWidth="146.0" text="Slet lærer" />
-      <Button layoutX="514.0" layoutY="565.0" mnemonicParsing="false" onAction="#deleteStudentbtn" prefHeight="25.0" prefWidth="164.0" text="Slet elev" />
       <Button fx:id="Closeid" layoutX="769.0" layoutY="621.0" mnemonicParsing="false" onAction="#ClloseBtn" prefHeight="25.0" prefWidth="89.0" style="-fx-background-radius: 45;" text="Luk" />
       <Label layoutX="24.0" layoutY="634.0" />
       <Label fx:id="welcomeLbl" layoutX="24.0" layoutY="613.0" />

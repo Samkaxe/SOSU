@@ -20,7 +20,10 @@ public class DAOCase {
 
         copyChecker = CopyChecker.getInstance();
     }
-
+    /*
+    this method retrieve list of cases from the database by schoolid
+    we declare boolean iscopy to make sure no duplicated data in the table view
+     */
     public List<Case> getAllCases(Connection con,int schoolid) throws DalException {
         ArrayList<Case> cases = new ArrayList<>();
         try{
@@ -49,6 +52,7 @@ public class DAOCase {
         }
     }
 
+    // this method retrive every case assigned to group of users using join statement
     public List<Case> getCasesAssignedTo(Connection con,Group group)throws DalException{
         ArrayList<Case> cases = new ArrayList<>();
         try {
@@ -75,7 +79,7 @@ public class DAOCase {
            throw new DalException("Couldnot retrive list of cases from the database " , e);
         }
     }
-
+        // sergio refactor the method so instead of using joins he prefers nested select statement
     public void assignCaseToGroup(Connection con,Patient patient, Case assignedCase, Group group) throws DalException {
         try{
             String sql = "INSERT INTO [Case] (Description_of_the_condition,CategoryName,SubCategoryName,[name],schoolid,isCopy) VALUES (?,?,?,?,?,?)";

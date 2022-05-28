@@ -178,19 +178,6 @@ public class BLLManager implements BLLFacade {
         return dalFacade.getGroupOf(student);
     }
 
-    @Override
-    public StudentQuestionnaire getQuestionnaireOf(Group group) throws DalException {
-        return dalFacade.getQuestionnaireOf(group);
-    }
-
-    public List<User> searchForUser(String query) throws DalException {
-        return dalFacade.searchForUser(query);
-    }
-
-    @Override
-    public List<User> getAllUSERS(int schoolId , String utype) throws DalException {
-        return dalFacade.getAllUSERS(schoolId , utype);
-    }
 
     @Override
     public List<StudentQuestion> getQuestionnaireQuestions(int questionnaireId) throws DalException {

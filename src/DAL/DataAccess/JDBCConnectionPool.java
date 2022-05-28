@@ -12,7 +12,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 
-
+/*
+we implement the object pool patten for performance reasons this pattern offer many binifts like
+ It boosts the performance of the application significantly.
+ it manages the connections and provides a way to reuse and share them.
+ It can also provide the limit for the maximum number of objects that can be created.
+ and this happened by two hashmap list and long primitive data type
+  we basically create one connection to manage the data and since this connection is expired we save it on the locked list
+  if we want to  establish another connection we simply reuse that connection again
+ */
 
 public class JDBCConnectionPool {
 

@@ -81,12 +81,7 @@ public class AdminMOD {
         updatethelist();
     }
 
-    public ObservableList<User> filter(ObservableList<User> allusers ,String q )throws DalException{
-        allusers  = FXCollections.observableArrayList();
-        allusers.addAll(manager.searchForUser(q));
 
-       return allusers;
-    }
     public ObservableList<User> getallusers(int schoolid , String utype) throws DalException {
       users = FXCollections.observableArrayList();
       if(utype.equals("TEACHER")){

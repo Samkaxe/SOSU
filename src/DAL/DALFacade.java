@@ -25,7 +25,6 @@ public interface DALFacade {
 
     User addUser(User user ) throws DalException; //
 
-    List<User> searchForUser (String query) throws DalException;
 
     List<Patient> getAllPatients(int schoolid) throws DalException;
 
@@ -51,11 +50,7 @@ public interface DALFacade {
         //
     void deleteGroup(Group group)throws DalException;
 
-    List<User> getUsersInGroup(int id)throws DalException;
-
     void addUsertoGroup(Group group , User user)throws DalException;
-
-    void removeUserFromGroup(User user)throws DalException;
 
     void assignCaseToGroup(Patient p , Case c , Group g) throws DalException;
 
@@ -77,7 +72,6 @@ public interface DALFacade {
 
     List<User> getAllUSERS(int schoolId  ,String utype) throws DalException;
 
-     List<User> getALLUsers(int schoolid , String utype) throws DalException;
 
     Group getGroupOf(User student) throws DalException;
 

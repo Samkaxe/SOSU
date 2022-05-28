@@ -68,10 +68,6 @@ public class DalMock implements DALFacade {
         return user;
     }
 
-    @Override
-    public List<User> searchForUser(String query) throws DalException {
-        return null;
-    }
 
     @Override
     public List<Patient> getAllPatients(int schoolid) throws DalException {
@@ -138,20 +134,13 @@ public class DalMock implements DALFacade {
         message = "group " + group.getName() + " deleted";
     }
 
-    @Override
-    public List<User> getUsersInGroup(int id) throws DalException {
-        return null;
-    }
+
 
     @Override
     public void addUsertoGroup(Group group, User user) throws DalException {
         message = "user " + user.getName() + " added to " + group.getName();
     }
 
-    @Override
-    public void removeUserFromGroup(User user) throws DalException {
-
-    }
 
     @Override
     public void assignCaseToGroup(Patient p, Case c, Group g) throws DalException {
@@ -198,10 +187,6 @@ public class DalMock implements DALFacade {
         return null;
     }
 
-    @Override
-    public List<User> getALLUsers(int schoolid, String utype) throws DalException {
-        return null;
-    }
 
     @Override
     public Group getGroupOf(User student) throws DalException {
